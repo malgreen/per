@@ -14,7 +14,7 @@ typedef struct APP_STATE
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
-int main(void)
+int main(int argc, char *argv[])
 {
     // Initialization
     //--------------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ int main(void)
         .screenWidth = 800,
         .screenHeight = 450,
     };
-    APP_STATE prevAppState = {}; // TODO: should we allocate memory?
+    APP_STATE prevAppState; // TODO: should we allocate memory?
 
     // Window
     InitWindow(appState.screenWidth, appState.screenHeight, "Per");
@@ -49,7 +49,7 @@ int main(void)
         // RENDER
         //----------------------------------------------------------------------------------
         // TODO: retained-mode experimentation, just freezes the program right now?
-        if (memcmp(&appState, &prevAppState, sizeof(appState)) == 0)
+        if (&prevAppState != NULL && (&appState, &prevAppState, sizeof(appState)) == 0)
         {
             continue;
         }

@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.16)
 
 project(per)
 
-set(CMAKE_CXX_STANDARD 14) # Are we doing C or C++?
+set(CMAKE_C_STANDARD 99)
 add_subdirectory(vendor/raylib)
-file(GLOB_RECURSE SOURCES "source/*.cpp")
+file(GLOB_RECURSE SOURCES "source/*.c")
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
