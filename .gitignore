@@ -14,3 +14,7 @@ bin
 build
 out
 .vscode
+.cache
+.zed
+.idea
+.vs
