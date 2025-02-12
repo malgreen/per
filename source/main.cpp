@@ -2,6 +2,9 @@
 #define SDL_MAIN_USE_CALLBACKS 1
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
+#include "imgui.h"
+#include "imgui_impl_sdl3.h"
+#include "imgui_impl_sdlgpu3.h"
 
 /* custom types */
 typedef enum E_MessageBoxResult
@@ -24,8 +27,8 @@ static S_AppState G_AppState = {
     .quitMessageBoxResult = MESSAGE_BOX_RESULT_NO,
 };
 
-static SDL_Window *G_Window = NULL;
-static SDL_GPUDevice *G_GPUDevice = NULL; /* idk why I want to use GPU API instead of Renderer API, but I do */
+static SDL_Window *G_Window = nullptr;
+static SDL_GPUDevice *G_GPUDevice = nullptr; /* idk why I want to use GPU API instead of Renderer API, but I do */
 
 /* startup callback */
 SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
@@ -43,7 +46,7 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     /* initialize window */
     Uint32 window_flags = SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIDDEN;
     G_Window = SDL_CreateWindow("Per", 1280, 720, window_flags);
-    if (G_Window == NULL)
+    if (G_Window == nullptr)
     {
         SDL_Log("Couldn't create window: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -52,8 +55,8 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
 
     /* initialize GPU device */
     bool useDebugGPU = true;
-    G_GPUDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, useDebugGPU, NULL);
-    if (G_GPUDevice == NULL)
+    G_GPUDevice = SDL_CreateGPUDevice(SDL_GPU_SHADERFORMAT_SPIRV | SDL_GPU_SHADERFORMAT_DXIL | SDL_GPU_SHADERFORMAT_METALLIB, useDebugGPU, nullptr);
+    if (G_GPUDevice == nullptr)
     {
         SDL_Log("Couldn't create GPU device: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -125,15 +128,15 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     /* draw using GPU */
     SDL_GPUCommandBuffer *commandBuffer = SDL_AcquireGPUCommandBuffer(G_GPUDevice);
-    if (commandBuffer == NULL)
+    if (commandBuffer == nullptr)
     {
         SDL_Log("Couldn't acquire GPU command buffer: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
     SDL_GPUTexture *swapchainTexture;
-    SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer, G_Window, &swapchainTexture, NULL, NULL);
-    if (swapchainTexture == NULL)
+    SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer, G_Window, &swapchainTexture, nullptr, nullptr);
+    if (swapchainTexture == nullptr)
     {
         SDL_Log("Couldn't acquire GPU swapchain texture: %s", SDL_GetError());
         return SDL_APP_FAILURE;
@@ -149,7 +152,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         .cycle = false,
     };
 
-    SDL_GPURenderPass *renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, NULL);
+    SDL_GPURenderPass *renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
     SDL_EndGPURenderPass(renderPass);
 
     SDL_SubmitGPUCommandBuffer(commandBuffer);
