@@ -18,6 +18,7 @@ typedef struct S_AppState
     int screenWidth;
     int screenHeight;
     E_MessageBoxResult quitMessageBoxResult;
+    bool showDemoWindow;
 } S_AppState;
 
 /* global variables */
@@ -25,6 +26,7 @@ static S_AppState G_AppState = {
     .screenWidth = 0,
     .screenHeight = 0,
     .quitMessageBoxResult = MESSAGE_BOX_RESULT_NO,
+    .showDemoWindow = true,
 };
 
 static SDL_Window *G_Window = nullptr;
@@ -69,6 +71,22 @@ SDL_AppResult SDL_AppInit(void **appstate, int argc, char *argv[])
     }
     // i think VSYNC present mode is better than SDL_GPU_PRESENTMODE_MAILBOX (for desktop app), because it limits FPS
     SDL_SetGPUSwapchainParameters(G_GPUDevice, G_Window, SDL_GPU_SWAPCHAINCOMPOSITION_SDR, SDL_GPU_PRESENTMODE_VSYNC);
+
+    /* initialize ImGui */
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    ImGui::StyleColorsDark();
+    // ImGui::StyleColorsLight();
+    ImGui_ImplSDL3_InitForSDLGPU(G_Window);
+    ImGui_ImplSDLGPU3_InitInfo init_info = {
+        .Device = G_GPUDevice,
+        .ColorTargetFormat = SDL_GetGPUSwapchainTextureFormat(G_GPUDevice, G_Window),
+        .MSAASamples = SDL_GPU_SAMPLECOUNT_1,
+    };
+    ImGui_ImplSDLGPU3_Init(&init_info);
 
     SDL_ShowWindow(G_Window);
     return SDL_APP_CONTINUE;
@@ -125,6 +143,15 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     }
 
     /* build UI */
+    ImGui_ImplSDLGPU3_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
+    ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow(&G_AppState.showDemoWindow);
+
+    /* render UI */
+    ImGui::Render();
+    ImDrawData *drawData = ImGui::GetDrawData();
 
     /* draw using GPU */
     SDL_GPUCommandBuffer *commandBuffer = SDL_AcquireGPUCommandBuffer(G_GPUDevice);
@@ -142,6 +169,8 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         return SDL_APP_FAILURE;
     }
 
+    Imgui_ImplSDLGPU3_PrepareDrawData(drawData, commandBuffer);
+
     SDL_GPUColorTargetInfo targetInfo = {
         .texture = swapchainTexture,
         .clear_color = (SDL_FColor){0.3f, 0.4f, 0.5f, 1.0f},
@@ -153,6 +182,7 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     };
 
     SDL_GPURenderPass *renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, nullptr);
+    ImGui_ImplSDLGPU3_RenderDrawData(drawData, commandBuffer, renderPass);
     SDL_EndGPURenderPass(renderPass);
 
     SDL_SubmitGPUCommandBuffer(commandBuffer);
@@ -164,7 +194,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 void SDL_AppQuit(void *appstate, SDL_AppResult result)
 {
     SDL_WaitForGPUIdle(G_GPUDevice);
-
+    ImGui_ImplSDL3_Shutdown();
+    ImGui_ImplSDLGPU3_Shutdown();
+    ImGui::DestroyContext();
     SDL_ReleaseWindowFromGPUDevice(G_GPUDevice, G_Window);
     SDL_DestroyGPUDevice(G_GPUDevice);
     SDL_DestroyWindow(G_Window);
