@@ -6,9 +6,8 @@
 /* custom types */
 typedef enum E_MessageBoxResult
 {
-    MESSAGE_BOX_RESULT_NULL,
-    MESSAGE_BOX_RESULT_CONFIRM,
-    MESSAGE_BOX_RESULT_CANCEL,
+    MESSAGE_BOX_RESULT_YES,
+    MESSAGE_BOX_RESULT_NO,
 } E_MessageBoxResult;
 
 typedef struct S_AppState
@@ -22,7 +21,7 @@ typedef struct S_AppState
 static S_AppState G_AppState = {
     .screenWidth = 0,
     .screenHeight = 0,
-    .quitMessageBoxResult = MESSAGE_BOX_RESULT_NULL,
+    .quitMessageBoxResult = MESSAGE_BOX_RESULT_NO,
 };
 
 static SDL_Window *G_Window = NULL;
@@ -87,10 +86,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
         { // show "quit" message box, could go in the SDL_EVENT_QUIT if statement
             const SDL_MessageBoxButtonData messageBoxButtons[] = {
                 {.flags = SDL_MESSAGEBOX_BUTTON_RETURNKEY_DEFAULT,
-                 .buttonID = MESSAGE_BOX_RESULT_CONFIRM,
+                 .buttonID = MESSAGE_BOX_RESULT_YES,
                  .text = "Yes"},
                 {.flags = SDL_MESSAGEBOX_BUTTON_ESCAPEKEY_DEFAULT,
-                 .buttonID = MESSAGE_BOX_RESULT_CANCEL,
+                 .buttonID = MESSAGE_BOX_RESULT_NO,
                  .text = "No"},
             };
             SDL_MessageBoxData messageBoxData = {
@@ -117,13 +116,9 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 {
     /* act on state */
     SDL_GetWindowSize(G_Window, &G_AppState.screenWidth, &G_AppState.screenHeight);
-    if (G_AppState.quitMessageBoxResult != MESSAGE_BOX_RESULT_NULL)
+    if (G_AppState.quitMessageBoxResult == MESSAGE_BOX_RESULT_YES)
     {
-        if (G_AppState.quitMessageBoxResult == MESSAGE_BOX_RESULT_CONFIRM) // "Yes" button
-        {
-            return SDL_APP_SUCCESS;
-        }
-        G_AppState.quitMessageBoxResult = MESSAGE_BOX_RESULT_NULL;
+        return SDL_APP_SUCCESS;
     }
 
     /* build UI */
@@ -144,21 +139,19 @@ SDL_AppResult SDL_AppIterate(void *appstate)
         return SDL_APP_FAILURE;
     }
 
-    if (swapchainTexture != NULL)
-    {
-        SDL_GPUColorTargetInfo targetInfo = {
-            .texture = swapchainTexture,
-            .clear_color = (SDL_FColor){0.3f, 0.4f, 0.5f, 1.0f},
-            .load_op = SDL_GPU_LOADOP_CLEAR,
-            .store_op = SDL_GPU_STOREOP_STORE,
-            .mip_level = 0,
-            .layer_or_depth_plane = 0,
-            .cycle = false,
-        };
+    SDL_GPUColorTargetInfo targetInfo = {
+        .texture = swapchainTexture,
+        .clear_color = (SDL_FColor){0.3f, 0.4f, 0.5f, 1.0f},
+        .load_op = SDL_GPU_LOADOP_CLEAR,
+        .store_op = SDL_GPU_STOREOP_STORE,
+        .mip_level = 0,
+        .layer_or_depth_plane = 0,
+        .cycle = false,
+    };
 
-        SDL_GPURenderPass *renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, NULL);
-        SDL_EndGPURenderPass(renderPass);
-    }
+    SDL_GPURenderPass *renderPass = SDL_BeginGPURenderPass(commandBuffer, &targetInfo, 1, NULL);
+    SDL_EndGPURenderPass(renderPass);
+
     SDL_SubmitGPUCommandBuffer(commandBuffer);
 
     return SDL_APP_CONTINUE;
