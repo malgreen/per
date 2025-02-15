@@ -114,10 +114,10 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
                  .text = "No"},
             };
             SDL_MessageBoxData messageBoxData = {
-                .title = "Quit",
-                .message = "Are you sure you want to quit?",
                 .flags = SDL_MESSAGEBOX_INFORMATION,
                 .window = G_Window,
+                .title = "Quit",
+                .message = "Are you sure you want to quit?",
                 .numbuttons = 2,
                 .buttons = messageBoxButtons,
             };
@@ -135,11 +135,16 @@ SDL_AppResult SDL_AppEvent(void *appstate, SDL_Event *event)
 /* frame/tick callback */
 SDL_AppResult SDL_AppIterate(void *appstate)
 {
-    /* act on state */
+    /* update state */
     SDL_GetWindowSize(G_Window, &G_AppState.screenWidth, &G_AppState.screenHeight);
     if (G_AppState.quitMessageBoxResult == MESSAGE_BOX_RESULT_YES)
     {
         return SDL_APP_SUCCESS;
+    }
+    if (SDL_GetWindowFlags(G_Window) & SDL_WINDOW_MINIMIZED)
+    {
+        // TODO: make sure this is the best way to do it
+        return SDL_APP_CONTINUE;
     }
 
     /* build UI */
@@ -151,7 +156,6 @@ SDL_AppResult SDL_AppIterate(void *appstate)
 
     /* render UI */
     ImGui::Render();
-    ImDrawData *drawData = ImGui::GetDrawData();
 
     /* draw using GPU */
     SDL_GPUCommandBuffer *commandBuffer = SDL_AcquireGPUCommandBuffer(G_GPUDevice);
@@ -165,19 +169,28 @@ SDL_AppResult SDL_AppIterate(void *appstate)
     SDL_WaitAndAcquireGPUSwapchainTexture(commandBuffer, G_Window, &swapchainTexture, nullptr, nullptr);
     if (swapchainTexture == nullptr)
     {
+        SDL_Log("Screen Width: %d, Screen Height: %d", (G_AppState.screenWidth, G_AppState.screenHeight));
         SDL_Log("Couldn't acquire GPU swapchain texture: %s", SDL_GetError());
         return SDL_APP_FAILURE;
     }
 
+    ImDrawData *drawData = ImGui::GetDrawData();
     Imgui_ImplSDLGPU3_PrepareDrawData(drawData, commandBuffer);
+
+    SDL_FColor backgroundColor = {
+        .r = 0.3f,
+        .g = 0.4f,
+        .b = 0.5f,
+        .a = 1.0f,
+    };
 
     SDL_GPUColorTargetInfo targetInfo = {
         .texture = swapchainTexture,
-        .clear_color = (SDL_FColor){0.3f, 0.4f, 0.5f, 1.0f},
-        .load_op = SDL_GPU_LOADOP_CLEAR,
-        .store_op = SDL_GPU_STOREOP_STORE,
         .mip_level = 0,
         .layer_or_depth_plane = 0,
+        .clear_color = backgroundColor,
+        .load_op = SDL_GPU_LOADOP_CLEAR,
+        .store_op = SDL_GPU_STOREOP_STORE,
         .cycle = false,
     };
 
