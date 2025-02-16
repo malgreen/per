@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.20)
 project(per)
 
 set(CMAKE_CXX_STANDARD 20)
+
+set(wxBUILD_SHARED OFF)
 add_subdirectory(vendor/wxWidgets)
+
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 
 IF(WIN32)
@@ -13,5 +16,3 @@ ELSE()
 ENDIF()
 
 target_link_libraries(${PROJECT_NAME} wx::core wx::base)
-
-# target_include_directories(${PROJECT_NAME} PRIVATE vendor/wxWidgets/include)
