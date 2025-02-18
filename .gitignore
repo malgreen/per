@@ -13,5 +13,7 @@ CMakeUserPresets.json
 bin
 build
 out
+.cache
 .vscode
 imgui.ini
+.DS_Store
