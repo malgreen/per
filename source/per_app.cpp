@@ -1,5 +1,5 @@
-#include "PerApp.h"
-#include "MainFrame.h"
+#include "per_app.h"
+#include "frames/main_frame.h"
 
 bool PerApp::OnInit()
 {

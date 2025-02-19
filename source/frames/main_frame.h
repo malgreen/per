@@ -1,3 +1,6 @@
+#ifndef MAIN_FRAME_H
+#define MAIN_FRAME_H
+
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
@@ -13,3 +16,4 @@ private:
     void OnAbout(wxCommandEvent &event);
     wxDECLARE_EVENT_TABLE();
 };
+#endif

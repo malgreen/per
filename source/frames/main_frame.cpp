@@ -1,5 +1,8 @@
-#include "PerApp.h"
-#include "MainFrame.h"
+#include "../per_app.h"
+#include "wx/button.h"
+#include "wx/sizer.h"
+#include <cstddef>
+#include "main_frame.h"
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT, MainFrame::OnExit)
@@ -19,6 +22,14 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
     SetMenuBar(menuBar);
     CreateStatusBar();
     SetStatusText("Welcome to wxWidgets!");
+
+    wxBoxSizer *boxSizer = new wxBoxSizer(wxVERTICAL);
+
+    wxAnyButton *button = new wxButtonBase();
+
+    boxSizer->Add(button, wxEXPAND); // TODO: crash on startup
+
+    this->SetSizer(boxSizer);
 }
 
 void MainFrame::OnExit(wxCommandEvent &event)
