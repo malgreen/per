@@ -23,7 +23,7 @@ else()
     add_executable(${PROJECT_NAME} ${SOURCES})
 endif()
 
-target_link_libraries(${PROJECT_NAME} wx::core wx::base)
+target_link_libraries(${PROJECT_NAME} wx::core wx::base wx::aui)
 
 install(
     TARGETS ${PROJECT_NAME}

@@ -1,5 +1,5 @@
-#ifndef MAIN_FRAME_H
-#define MAIN_FRAME_H
+#ifndef MAIN_FRAME_H_
+#define MAIN_FRAME_H_
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -12,8 +12,10 @@ public:
     MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size);
 
 private:
+    wxDECLARE_EVENT_TABLE();
     void OnExit(wxCommandEvent &event);
     void OnAbout(wxCommandEvent &event);
-    wxDECLARE_EVENT_TABLE();
+    void BuildMenuBar();
 };
+
 #endif

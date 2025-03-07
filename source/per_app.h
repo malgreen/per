@@ -1,5 +1,5 @@
-#ifndef PER_APP_H
-#define PER_APP_H
+#ifndef PER_APP_H_
+#define PER_APP_H_
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
