@@ -8,5 +8,10 @@ HttpPanel::HttpPanel(wxWindow *parent, HttpRequestModel *httpRequestModel) : wxP
     wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticText *textLabel = new wxStaticText(this, wxID_ANY, _("MyLabel"), wxDefaultPosition, wxDefaultSize, 0);
-    verticalSizer->Add(textLabel, 0, wxALL, 5); // TODO: maybe wxEXPAND
+    verticalSizer->Add(new wxStaticText(this, wxID_ANY, _("MyLabel"), wxDefaultPosition, wxDefaultSize, 0), 0, wxALL, 5); // TODO: maybe wxEXPAND
+
+    // URL SECTION
+    wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    wxComboBox *comboBox = new wxComboBox(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, 0, nullptr, 0);
 }

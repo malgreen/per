@@ -5,7 +5,7 @@
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
-#include "../models/http_request_model.h"
+#include "../models/http_models.h"
 
 class HttpPanel : public wxPanel
 {
