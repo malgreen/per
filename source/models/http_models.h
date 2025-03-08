@@ -14,7 +14,7 @@ typedef enum
     PUT
 } HttpMethod;
 
-std::map<HttpMethod, char const *> HttpMethodMap = {
+static std::map<HttpMethod, char const *> HttpMethodMap = {
     {HttpMethod::GET, "GET"},
 
 };

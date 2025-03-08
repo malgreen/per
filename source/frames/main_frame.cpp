@@ -3,35 +3,41 @@
 #include <wx/aui/auibook.h>
 #include <cstddef>
 #include "main_frame.h"
+#include "../panels/http_panel.h"
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT, MainFrame::OnExit)
         EVT_MENU(wxID_ABOUT, MainFrame::OnAbout)
-            wxEND_EVENT_TABLE();
+            EVT_MENU(perID_NEW_TAB, MainFrame::OnNewTab)
+                wxEND_EVENT_TABLE();
 
 MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size) : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
     this->BuildMenuBar();
 
-    wxBoxSizer *boxSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer *rootSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    wxComboBox *comboBox = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, NULL, 0);
-    wxString httpMethods[] = {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"};
-    for (wxString method : httpMethods)
-    {
-        comboBox->Append(method);
-    }
-    comboBox->SetSelection(0);
+    m_TabNotebook = new wxAuiNotebook(this, wxID_ANY);
 
-    boxSizer->Add(comboBox, 0, wxALL, 5);
+    rootSizer->Add(m_TabNotebook, 1, wxEXPAND | wxALL);
 
-    wxTextCtrl *textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0);
-    boxSizer->Add(textCtrl, 0, wxEXPAND, 5);
+    this->SetSizer(rootSizer);
+}
 
-    wxButton *button = new wxButton(this, wxID_ANY, _("Send"), wxDefaultPosition, wxDefaultSize, 0);
-    boxSizer->Add(button, 0, wxALL, 5);
+void MainFrame::BuildMenuBar()
+{
+    wxMenu *menuFile = new wxMenu;
+    menuFile->Append(perID_NEW_TAB, "New tab");
+    menuFile->Append(wxID_EXIT);
 
-    this->SetSizer(boxSizer);
+    wxMenu *menuHelp = new wxMenu;
+    menuHelp->Append(wxID_ABOUT); // TODO: should be in about menu?
+
+    wxMenuBar *menuBar = new wxMenuBar;
+
+    menuBar->Append(menuFile, "&File");
+    menuBar->Append(menuHelp, "&Help");
+    SetMenuBar(menuBar);
 }
 
 void MainFrame::OnExit(wxCommandEvent &event)
@@ -41,19 +47,18 @@ void MainFrame::OnExit(wxCommandEvent &event)
 
 void MainFrame::OnAbout(wxCommandEvent &event)
 {
+    // TODO: generate with about.h.in
     wxString title = "About Hello World";
     wxString content = "This is a wxWidgets' Hello world sample";
     wxMessageBox(content, title, wxOK | wxICON_INFORMATION); // TODO: do we need icon?
 }
 
-void MainFrame::BuildMenuBar()
+void MainFrame::OnNewTab(wxCommandEvent &event)
 {
-    wxMenu *menuFile = new wxMenu;
-    menuFile->Append(wxID_EXIT);
-    wxMenu *menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT);
-    wxMenuBar *menuBar = new wxMenuBar;
-    menuBar->Append(menuFile, "&File");
-    menuBar->Append(menuHelp, "&Help");
-    SetMenuBar(menuBar);
+    HttpRequestModel httpRequestModel1 = {
+        .method = HttpMethod::GET,
+        .url = "https://www.google.com"};
+
+    HttpPanel *httpPanel1 = new HttpPanel(m_TabNotebook, &httpRequestModel1);
+    m_TabNotebook->AddPage(httpPanel1, httpRequestModel1.url);
 }
