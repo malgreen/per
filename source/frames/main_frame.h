@@ -25,6 +25,7 @@ private:
 
 enum
 {
+    perID_ZERO, // id of zero doesn't work for some widgets on macOS
     perID_NEW_TAB
 };
 

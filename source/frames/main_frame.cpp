@@ -27,7 +27,8 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
 void MainFrame::BuildMenuBar()
 {
     wxMenu *menuFile = new wxMenu;
-    menuFile->Append(perID_NEW_TAB, "New tab");
+    menuFile->Append(perID_NEW_TAB, "&new tab");
+    menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
     wxMenu *menuHelp = new wxMenu;
@@ -42,6 +43,7 @@ void MainFrame::BuildMenuBar()
 
 void MainFrame::OnExit(wxCommandEvent &event)
 {
+    // TODO: remember window state on exit (maybe in some .json somewhere), use it when starting the application again
     Close(true);
 }
 
