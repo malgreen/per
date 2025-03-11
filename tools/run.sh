@@ -4,4 +4,12 @@
 # rm /build/per
 cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
 cmake --build build --config Debug
-# ./build/per
+if test -d build/per.app; then
+    open build/per.app
+elif test -f build/per; then
+    ./build/per
+else
+    echo "binary not found"
+fi
+
+

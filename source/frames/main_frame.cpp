@@ -5,6 +5,7 @@
 #include "main_frame.h"
 #include "../panels/http_panel.h"
 #include "../utilities/per_ids.h"
+#include "../utilities/about.h"
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT, MainFrame::OnExit)
@@ -29,12 +30,13 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
 void MainFrame::BuildMenuBar()
 {
     wxMenu *menuFile = new wxMenu;
-    menuFile->Append(perID_NEW_TAB, "&new tab");
+    menuFile->Append(perID_NEW_TAB, "&New tab");
+
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
     wxMenu *menuHelp = new wxMenu;
-    menuHelp->Append(wxID_ABOUT); // TODO: should be in about menu?
+    menuHelp->Append(wxID_ABOUT);
 
     wxMenuBar *menuBar = new wxMenuBar;
 
@@ -51,10 +53,9 @@ void MainFrame::OnExit(wxCommandEvent &event)
 
 void MainFrame::OnAbout(wxCommandEvent &event)
 {
-    // TODO: generate with about.h.in
-    wxString title = "About Hello World";
-    wxString content = "This is a wxWidgets' Hello world sample";
-    wxMessageBox(content, title, wxOK | wxICON_INFORMATION); // TODO: do we need icon?
+    wxString title = PROJECT_NAME;
+    wxString content = "version " + PROJECT_VERSION + "\n" + "commit " + PROJECT_GIT_HASH + "\n" + "built " + PROJECT_BUILD_DATE;
+    wxMessageBox(content, title, wxOK | wxICON_INFORMATION);
 }
 
 void MainFrame::OnNewTab(wxCommandEvent &event)
@@ -64,6 +65,5 @@ void MainFrame::OnNewTab(wxCommandEvent &event)
         .url = "https://www.google.com"};
 
     HttpPanel *httpPanel1 = new HttpPanel(m_TabNotebook, &httpRequestModel1);
-    m_TabNotebook->AddPage(httpPanel1, httpRequestModel1.url);
-    // TODO: focus/select new tab
+    m_TabNotebook->AddPage(httpPanel1, httpRequestModel1.url, true);
 }

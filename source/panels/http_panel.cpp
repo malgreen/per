@@ -6,28 +6,30 @@ wxBEGIN_EVENT_TABLE(HttpPanel, wxPanel)
 HttpPanel::HttpPanel(wxWindow *parent, HttpRequestModel *httpRequestModel) : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL)
 {
     int border = 5;
-    wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer *rootSizer = new wxBoxSizer(wxVERTICAL);
 
     wxStaticText *textLabel = new wxStaticText(this, wxID_ANY, httpRequestModel->url, wxDefaultPosition, wxDefaultSize, 0);
-    verticalSizer->Add(textLabel, 0, wxALL, border); // TODO: maybe wxEXPAND
+    rootSizer->Add(textLabel, 0, wxALL | wxEXPAND, border);
 
     /* HTTP METHOD + URL SECTION */
-    wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer *urlSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    horizontalSizer->Add(BuildHttpMethodComboBox(), 0, wxALL, border); // guess 5 is the border size
+    urlSizer->Add(BuildHttpMethodComboBox(), 0, wxALL, border); // guess 5 is the border size
 
     wxTextCtrl *urlTextCtrl = new wxTextCtrl(this, wxID_ANY, httpRequestModel->url, wxDefaultPosition, wxDefaultSize, 0);
-    horizontalSizer->Add(urlTextCtrl, 1, wxEXPAND | wxALL, border);
+    urlSizer->Add(urlTextCtrl, 1, wxALL, border);
 
     wxButton *sendButton = new wxButton(this, wxID_ANY, "Send", wxDefaultPosition, wxDefaultSize, 0); // apparently, we don't need default stuff
-    horizontalSizer->Add(sendButton, 0, wxALL, border);
+    urlSizer->Add(sendButton, 0, wxALL, border);
 
     /* PARAMS, HEADERS, BODY, AUTH SECTION */
 
-    /* FINAL COMP */
-    verticalSizer->Add(horizontalSizer, 1, wxEXPAND | wxALL, border);
+    /* RESPONSE SECTION */
 
-    this->SetSizerAndFit(verticalSizer);
+    /* FINAL COMP */
+    rootSizer->Add(urlSizer, 1, wxEXPAND | wxALL, border);
+
+    this->SetSizerAndFit(rootSizer);
 }
 
 wxComboBox *HttpPanel::BuildHttpMethodComboBox()
