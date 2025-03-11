@@ -13,6 +13,8 @@ add_subdirectory(vendor/wxWidgets)
 
 file(GLOB_RECURSE SOURCES "source/*.cpp")
 
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/utilities/about.h.in ${CMAKE_CURRENT_SOURCE_DIR}/utilities/about.h @ONLY)
+
 if(WIN32)
     add_executable(${PROJECT_NAME} WIN32 ${SOURCES})
     set(CPACK_GENERATOR "INNOSETUP")

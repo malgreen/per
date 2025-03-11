@@ -4,6 +4,7 @@
 #include <cstddef>
 #include "main_frame.h"
 #include "../panels/http_panel.h"
+#include "../utilities/per_ids.h"
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT, MainFrame::OnExit)
@@ -13,6 +14,7 @@ wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
 
 MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &size) : wxFrame(NULL, wxID_ANY, title, pos, size)
 {
+    this->SetSizeHints(wxDefaultSize, wxDefaultSize);
     this->BuildMenuBar();
 
     wxBoxSizer *rootSizer = new wxBoxSizer(wxHORIZONTAL);
@@ -63,4 +65,5 @@ void MainFrame::OnNewTab(wxCommandEvent &event)
 
     HttpPanel *httpPanel1 = new HttpPanel(m_TabNotebook, &httpRequestModel1);
     m_TabNotebook->AddPage(httpPanel1, httpRequestModel1.url);
+    // TODO: focus/select new tab
 }

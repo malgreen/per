@@ -12,8 +12,12 @@ class HttpPanel : public wxPanel
 public:
     HttpPanel(wxWindow *parent, HttpRequestModel *httpRequestModel);
 
+protected:
+    wxComboBox *httpMethodComboBox;
+
 private:
     wxDECLARE_EVENT_TABLE();
+    wxComboBox *BuildHttpMethodComboBox();
 };
 
 #endif

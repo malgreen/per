@@ -1,0 +1,14 @@
+#ifndef ABOUT_H_IN
+#define ABOUT_H_IN
+
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+#include <wx/wx.h>
+#endif
+
+const wxString PROJECT_NAME = "@PROJECT_NAME@";
+const wxString PROJECT_TITLE = "@PROJECT_TITLE@";
+const wxString PROJECT_VERSION = "@PROJECT_VERSION@";
+const wxString PROJECT_BUILD_DATE = "@PROJECT_BUILD_DATE@";
+
+#endif
