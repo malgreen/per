@@ -7,10 +7,13 @@
 #endif
 #include <wx/aui/auibook.h>
 
+// id of zero doesn't work for some widgets on macOS
 enum
 {
-    perID_ZERO, // id of zero doesn't work for some widgets on macOS
-    perID_NEW_TAB
+    perID_NONE = -1,
+    perID_NEW_TAB = 1,
+    perID_HTTP_PARAMS_GRID = 2,
+
 };
 
 #endif

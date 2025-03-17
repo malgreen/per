@@ -17,3 +17,6 @@ out
 .vscode
 imgui.ini
 .DS_Store
+.idea
+cmake-build-debug
+source/utilities/about.h

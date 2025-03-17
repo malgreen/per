@@ -8,3 +8,7 @@ Lightweight HTTP GUI
 
 1. Clone the repo to your pc
 2. Get the submodules with `git submodule update --init --recursive`
+
+## TODO
+
+- use auto when initializing more
