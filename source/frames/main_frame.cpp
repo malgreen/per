@@ -6,6 +6,7 @@
 #include "../panels/http_panel.h"
 #include "../utilities/per_ids.h"
 #include "../utilities/about.h"
+#include "../utilities/per_aui_tab_art.h"
 
 wxBEGIN_EVENT_TABLE(MainFrame, wxFrame)
     EVT_MENU(wxID_EXIT, MainFrame::OnExit)
@@ -21,6 +22,7 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
     wxBoxSizer *rootSizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_TabNotebook = new wxAuiNotebook(this, wxID_ANY);
+    m_TabNotebook->SetArtProvider(new PerAuiTabArt());
 
     rootSizer->Add(m_TabNotebook, 1, wxEXPAND | wxALL);
 
