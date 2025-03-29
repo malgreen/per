@@ -11,10 +11,12 @@ class PerAuiTabArt : public wxAuiDefaultTabArt
 {
 public:
     PerAuiTabArt();
-    wxAuiTabArt *Clone();
+    virtual ~PerAuiTabArt(); // TODO: do we need destructrs?
+    wxAuiTabArt *Clone() override;
+    void UpdateColoursFromSystem() override;
 
-    // private:
-    //     static const char *m_closeButtonSvg;
+private:
+    void SetAppropriateCloseButton();
 };
 
 #endif
