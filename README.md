@@ -11,4 +11,5 @@ Lightweight HTTP GUI
 
 ## TODO
 
-- use auto when initializing more
+- refactor: use auto more
+- find out if we need to use namespaces throughout the codebase

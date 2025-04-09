@@ -21,12 +21,15 @@ protected:
     wxGrid *m_HeadersGrid;
 
 private:
+    HttpRequestModel *m_HttpRequestModel;
     wxDECLARE_EVENT_TABLE();
     wxComboBox *BuildHttpMethodComboBox();
     wxPanel *BuildParamsPanel(wxWindow *parent);
     wxPanel *BuildHeadersPanel(wxWindow *parent);
     wxPanel *BuildBodyPanel(wxWindow *parent);
     void OnGridCellChange(wxGridEvent &event);
+    void OnSize(wxSizeEvent &event);
+    void AutoFitGrids();
 };
 
 #endif

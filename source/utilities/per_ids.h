@@ -12,7 +12,7 @@ enum
     perID_NONE = -1,
     perID_NEW_TAB = 1,
     perID_HTTP_PARAMS_GRID = 2,
-
+    perID_HTTP_HEADERS_GRID = 3,
 };
 
 #endif

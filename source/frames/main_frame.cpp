@@ -19,7 +19,7 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
     this->SetSizeHints(wxDefaultSize, wxDefaultSize);
     this->BuildMenuBar();
 
-    wxBoxSizer *rootSizer = new wxBoxSizer(wxHORIZONTAL);
+    const auto rootSizer = new wxBoxSizer(wxHORIZONTAL);
 
     m_TabNotebook = new wxAuiNotebook(this, wxID_ANY);
     m_TabNotebook->SetArtProvider(new PerAuiTabArt());
@@ -31,16 +31,16 @@ MainFrame::MainFrame(const wxString &title, const wxPoint &pos, const wxSize &si
 
 void MainFrame::BuildMenuBar()
 {
-    wxMenu *menuFile = new wxMenu;
+    auto *menuFile = new wxMenu;
     menuFile->Append(perID_NEW_TAB, "&New tab");
 
     menuFile->AppendSeparator();
     menuFile->Append(wxID_EXIT);
 
-    wxMenu *menuHelp = new wxMenu;
+    auto *menuHelp = new wxMenu;
     menuHelp->Append(wxID_ABOUT);
 
-    wxMenuBar *menuBar = new wxMenuBar;
+    const auto menuBar = new wxMenuBar;
 
     menuBar->Append(menuFile, "&File");
     menuBar->Append(menuHelp, "&Help");
@@ -55,17 +55,31 @@ void MainFrame::OnExit(wxCommandEvent &event)
 
 void MainFrame::OnAbout(wxCommandEvent &event)
 {
-    wxString title = PROJECT_NAME;
-    wxString content = "version " + PROJECT_VERSION + "\n" + "commit " + PROJECT_GIT_HASH + "\n" + "built " + PROJECT_BUILD_DATE;
+    const wxString title = PROJECT_NAME;
+    const wxString content = "version " + PROJECT_VERSION + "\n" + "commit " + PROJECT_GIT_HASH + "\n" + "built " + PROJECT_BUILD_DATE;
     wxMessageBox(content, title, wxOK | wxICON_INFORMATION);
 }
 
 void MainFrame::OnNewTab(wxCommandEvent &event)
 {
-    HttpRequestModel httpRequestModel1 = {
+    HttpRequestModel requestModel = {
         .method = HttpMethod::GET,
-        .url = "https://www.google.com"};
+        .url = "https://www.google.com",
+        .parameters = {},
+        .headers = {},
+        .contentType = "application/json",
+        .bodyContent = "",
+    };
 
-    HttpPanel *httpPanel1 = new HttpPanel(m_TabNotebook, &httpRequestModel1);
-    m_TabNotebook->AddPage(httpPanel1, httpRequestModel1.url, true);
+    // TODO: this is temporary, should probably be moved to a function like "SetDefaultHeaders(model)"
+    requestModel.headers["Host"] = "<will be set during send>";
+    requestModel.headers["Content-Length"] = "<will be set during send>";
+    requestModel.headers["Content-Type"] = requestModel.contentType; // should probabily implement XML support
+    requestModel.headers["User-Agent"] = "PostmanRuntime/1.0";       // TODO: temp?
+    requestModel.headers["Accept"] = "application/json";             // should it just be */*?
+    requestModel.headers["Accept-Encoding"] = "gzip, deflate, br";   // no idea if this works
+    requestModel.headers["Connection"] = "keep-alive";
+
+    auto *httpPanel1 = new HttpPanel(m_TabNotebook, &requestModel);
+    m_TabNotebook->AddPage(httpPanel1, requestModel.url, true);
 }

@@ -6,7 +6,7 @@ wxIMPLEMENT_APP(PerApp);
 
 bool PerApp::OnInit()
 {
-    MainFrame *frame = new MainFrame(PROJECT_NAME, wxPoint(50, 50), wxSize(1280, 720));
+    const auto frame = new MainFrame(PROJECT_NAME, wxPoint(50, 50), wxSize(1280, 720));
     frame->Show(true);
     return true;
 }

@@ -24,6 +24,10 @@ typedef struct
 {
     HttpMethod method;
     wxString url;
+    std::map<wxString, wxString> parameters;
+    std::map<wxString, wxString> headers;
+    wxString contentType;
+    wxString bodyContent;
 } HttpRequestModel;
 
 #endif
