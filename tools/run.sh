@@ -7,7 +7,7 @@ elif test -f build/per; then
     rm build/per
 fi
 
-cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build
+cmake -DCMAKE_BUILD_TYPE=Debug -S . -B build -G Ninja
 cmake --build build --config Debug
 
 if test -d build/per.app; then
