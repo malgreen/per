@@ -1,14 +1,11 @@
 #ifndef HTTP_PANEL_H_
 #define HTTP_PANEL_H_
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
 #include <wx/wx.h>
-#endif
-#include "../models/http_models.h"
-#include <wx/notebook.h>
 #include <wx/grid.h>
+#include <wx/notebook.h>
 #include "../utilities/per_ids.h"
+#include "../models/http_models.h"
 
 class HttpPanel : public wxPanel
 {

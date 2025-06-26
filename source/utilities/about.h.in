@@ -1,10 +1,7 @@
 #ifndef ABOUT_H_
 #define ABOUT_H_
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
 #include <wx/wx.h>
-#endif
 
 const wxString PROJECT_NAME = "@PROJECT_NAME@";
 const wxString PROJECT_VERSION = "@PROJECT_VERSION@";

@@ -18,5 +18,6 @@ out
 imgui.ini
 .DS_Store
 .idea
+.vs
 cmake-build-debug
 source/utilities/about.h

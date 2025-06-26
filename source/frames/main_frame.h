@@ -1,10 +1,7 @@
 #ifndef MAIN_FRAME_H_
 #define MAIN_FRAME_H_
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
 #include <wx/wx.h>
-#endif
 #include <wx/aui/auibook.h>
 
 class MainFrame : public wxFrame
