@@ -9,10 +9,6 @@ PerAuiTabArt::PerAuiTabArt()
     SetAppropriateCloseButton();
 }
 
-PerAuiTabArt::~PerAuiTabArt()
-{
-}
-
 wxAuiTabArt *PerAuiTabArt::Clone()
 {
     return new PerAuiTabArt(*this);
@@ -20,7 +16,7 @@ wxAuiTabArt *PerAuiTabArt::Clone()
 
 void PerAuiTabArt::UpdateColoursFromSystem()
 {
-    wxAuiDefaultTabArt::UpdateColoursFromSystem(); // call base method
+    wxAuiSimpleTabArt::UpdateColoursFromSystem(); // call base method
     SetAppropriateCloseButton();
 }
 

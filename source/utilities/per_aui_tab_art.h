@@ -4,11 +4,10 @@
 #include <wx/wx.h>
 #include <wx/aui/auibook.h>
 
-class PerAuiTabArt : public wxAuiDefaultTabArt
+class PerAuiTabArt final : public wxAuiSimpleTabArt
 {
 public:
     PerAuiTabArt();
-    virtual ~PerAuiTabArt(); // TODO: do we need destructrs?
     wxAuiTabArt *Clone() override;
     void UpdateColoursFromSystem() override;
 

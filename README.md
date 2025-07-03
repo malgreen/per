@@ -11,5 +11,7 @@ Lightweight HTTP GUI
 
 ## TODO
 
-- refactor: use auto more
+- refactor: use auto more 
 - find out if we need to use namespaces throughout the codebase
+- fix tab art, right now it just uses generic tab art  with a replaced close button
+- handle keyboard shortcuts (DOING)

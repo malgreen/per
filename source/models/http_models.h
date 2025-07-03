@@ -27,4 +27,15 @@ typedef struct
     wxString bodyContent;
 } HttpRequestModel;
 
+static void SetDefaultHttpHeaders(HttpRequestModel &model)
+{
+    model.headers["Host"] = "<will be set during send>";
+    model.headers["Content-Length"] = "<will be set during send>";
+    model.headers["Content-Type"] = model.contentType; // should probabily implement XML support
+    model.headers["User-Agent"] = "PostmanRuntime/1.0";       // TODO: temp?
+    model.headers["Accept"] = "application/json";             // should it just be */*?
+    model.headers["Accept-Encoding"] = "gzip, deflate, br";   // no idea if this works
+    model.headers["Connection"] = "keep-alive";
+}
+
 #endif
