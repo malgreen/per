@@ -21,17 +21,17 @@ class HttpTab : public QWidget
     Q_OBJECT
 
   public:
-    explicit HttpTab(QWidget *parent = nullptr, HttpRequestModel *httpRequestModel = nullptr);
+    explicit HttpTab(QWidget *parent, HttpRequestModel &httpRequestModel);
     ~HttpTab() override;
 
   private:
     Ui::HttpTab *ui;
-    HttpRequestModel *m_httpRequestModel;
-    void InitParametersTable(HttpRequestModel *httpRequestModel) const;
+    HttpRequestModel &m_httpRequestModel;
+    void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
     void OnTableCellChanged(int row, int column) const;
-    void AddTableRow(QTableWidget *table, EnabledKeyValuePair *rowData) const;
-    void AddTableRowIfLastRowNotEmpty(QTableWidget *table) const;
-    static bool IsTableRowEmpty(const QTableWidget *table, int row);
+    void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const;
+    void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
+    static bool IsTableRowEmpty(const QTableWidget &table, int row);
 };
 } // namespace Per
 

@@ -5,108 +5,130 @@
 
 namespace Per
 {
-HttpTab::HttpTab(QWidget *parent, HttpRequestModel *httpRequestModel) : QWidget(parent), ui(new Ui::HttpTab)
+HttpTab::HttpTab(QWidget *parent, HttpRequestModel &httpRequestModel)
+    : QWidget(parent), ui(new Ui::HttpTab), m_httpRequestModel(httpRequestModel)
 {
     ui->setupUi(this);
-    m_httpRequestModel = httpRequestModel;
 
-    this->InitParametersTable(httpRequestModel);
-
-    connect(ui->parametersTable, &QTableWidget::cellChanged, this, &HttpTab::OnTableCellChanged);
+    this->SetupEnabledKeyValueTable(*ui->parametersTable, m_httpRequestModel.parameters);
+    this->SetupEnabledKeyValueTable(*ui->headersTable, m_httpRequestModel.headers);
 }
 
 HttpTab::~HttpTab()
 {
     delete ui;
+    delete &m_httpRequestModel;
 }
 
-void HttpTab::InitParametersTable(HttpRequestModel *httpRequestModel) const
+void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const
 {
-    const auto table = ui->parametersTable;
+    /* one day it would be nice to use a QTableView with a backing model,
+     * the current setup means lots of state duplication. which is awesome */
 
-    // header setup
-    table->setColumnWidth(2, 30);
-    table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    // ui setup
+    table.setColumnWidth(2, 30);
+    table.horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    table.horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
 
-    // append an empty row
-    m_httpRequestModel->parameters.append({.enabled = true, .key = "", .value = ""});
+    // add empty list entry
+    tableData.append({.enabled = true, .key = "", .value = ""});
 
     // add rows to ui
     int i = 0;
-    for (auto &item : httpRequestModel->parameters)
+    for (auto &item : tableData)
     {
-        AddTableRow(table, &item);
+        AddTableRow(table, tableData, item);
         i++;
     }
 
+    // connect signal - TODO: lambda
+    // v1:
+    connect(&table, &QTableWidget::cellChanged, this, &HttpTab::OnTableCellChanged);
+    // v2:
+    // connect(&table, &QTableWidget::cellChanged, [this, &table, &tableData](const int row, const int column) {
+    //     if (column == 0)
+    //     {
+    //         tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
+    //         tableData[row].key = table.item(row, column)->text();
+    //     }
+    //     else if (column == 1)
+    //     {
+    //         tableData[row].value = table.item(row, column)->text();
+    //     }
+    //     AddTableRowIfLastRowNotEmpty(table, tableData);
+    // });
 }
+
 
 void HttpTab::OnTableCellChanged(int row, int column) const
 {
-    const auto sender = qobject_cast<QTableWidget *>(QObject::sender());
+    // TODO: dereferencing a cast to a pointer seems... odd
+    auto &table = *qobject_cast<QTableWidget*>(sender());
+
     // TODO: can below be an inline thing?
-    QList<EnabledKeyValuePair> &tableData = sender->objectName() == "parametersTable" ? m_httpRequestModel->parameters : m_httpRequestModel->headers;
+    auto &tableData = table.objectName() == "parametersTable" ? m_httpRequestModel.parameters : m_httpRequestModel.headers;
+
 
     if (column == 0)
     {
-        tableData[row].enabled = sender->item(row, column)->checkState() == Qt::Checked;
-        tableData[row].key = sender->item(row, column)->text();
-    } else if (column == 1)
+        tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
+        tableData[row].key = table.item(row, column)->text();
+    }
+    else if (column == 1)
     {
-        tableData[row].value = sender->item(row, column)->text();
+        tableData[row].value = table.item(row, column)->text();
     }
 
-    AddTableRowIfLastRowNotEmpty(sender);
+    AddTableRowIfLastRowNotEmpty(table, tableData);
 }
 
-void HttpTab::AddTableRow(QTableWidget *table, EnabledKeyValuePair *rowData) const
+void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const
 {
-    const int insertIndex = table->rowCount();
-    auto tableName = table->objectName();
-    QList<EnabledKeyValuePair> &tableData = table->objectName() == "parametersTable" ? m_httpRequestModel->parameters : m_httpRequestModel->headers;
+    const int insertIndex = table.rowCount();
+    auto tableName = table.objectName();
 
-    table->insertRow(insertIndex);
+    table.insertRow(insertIndex);
 
     // the persistent index is kept track of internally in the QTableWidget,
     // so it is updated whenever the table is updated
-    const auto persistentIndex = QPersistentModelIndex(table->model()->index(insertIndex, 2));
+    const auto persistentIndex = QPersistentModelIndex(table.model()->index(insertIndex, 2));
 
-    const auto keyTextItem = new QTableWidgetItem(rowData->key);
-    keyTextItem->setCheckState(rowData->enabled ? Qt::Checked : Qt::Unchecked);
+    const auto keyTextItem = new QTableWidgetItem(rowData.key);
+    keyTextItem->setCheckState(rowData.enabled ? Qt::Checked : Qt::Unchecked);
 
-    const auto valueTextItem = new QTableWidgetItem(rowData->value);
+    const auto valueTextItem = new QTableWidgetItem(rowData.value);
 
     const auto deleteRowButton = new QPushButton();
     deleteRowButton->setIcon(QIcon(this->style()->standardIcon(QStyle::SP_TitleBarCloseButton)));
-    connect(deleteRowButton, &QPushButton::clicked, [this, persistentIndex, table, &tableData, rowData] {
+
+    connect(deleteRowButton, &QPushButton::clicked, [this, persistentIndex, &table, &tableData] {
         const auto index = persistentIndex.row();
-        table->removeRow(index);
+        table.removeRow(index);
         tableData.removeAt(index);
-        AddTableRowIfLastRowNotEmpty(table);
+        AddTableRowIfLastRowNotEmpty(table, tableData);
     });
 
-    table->setItem(insertIndex, 0, keyTextItem);
-    table->setItem(insertIndex, 1, valueTextItem);
-    table->setCellWidget(insertIndex, 2, deleteRowButton);
+    table.setItem(insertIndex, 0, keyTextItem);
+    table.setItem(insertIndex, 1, valueTextItem);
+    table.setCellWidget(insertIndex, 2, deleteRowButton);
 }
 
-void HttpTab::AddTableRowIfLastRowNotEmpty(QTableWidget *table) const
+void HttpTab::AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const
 {
-    const int rowCount = table->rowCount();
+    const int rowCount = table.rowCount();
 
     if (rowCount < 1 || !IsTableRowEmpty(table, rowCount - 1))
     {
-        m_httpRequestModel->parameters.append({.enabled = true, .key = "", .value = ""});
-        AddTableRow(table, &m_httpRequestModel->parameters[m_httpRequestModel->parameters.count() - 1]);
+        tableData.append({.enabled = true, .key = "", .value = ""});
+        AddTableRow(table, tableData, tableData[tableData.count() - 1]);
     }
 }
 
-bool HttpTab::IsTableRowEmpty(const QTableWidget *table, const int row)
+bool HttpTab::IsTableRowEmpty(const QTableWidget &table, const int row)
 {
-    for (int i = 0; i < table->columnCount(); i++)
+    for (int i = 0; i < table.columnCount(); i++)
     {
-        const auto cell = table->item(row, i);
+        const auto cell = table.item(row, i);
         if (cell == nullptr)
             continue;
 

@@ -38,13 +38,12 @@ typedef struct
 
 static QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
 
-static void SetDefaultHttpHeaders(HttpRequestModel *model)
+static void SetDefaultHttpHeaders(HttpRequestModel &model)
 {
-    // TODO: better way to init headers?
-    model->headers = {
+    model.headers = {
         {true, "Host", "<set during send>"},
         {true, "Content-Length", "<set during send>"},
-        {true, "Content-Type", model->contentType},
+        {true, "Content-Type", model.contentType},
         {true, "User-Agent", "Chrome/138.0.0.0"}, // could be something else
         {true, "Accept", "application/json"},
         {true, "Accept-Encoding", "gzip, deflate, br"},
