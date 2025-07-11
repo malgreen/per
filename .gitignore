@@ -21,3 +21,4 @@ imgui.ini
 .vs
 cmake-build-*
 source/utilities/about.h
+.clangd

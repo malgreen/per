@@ -1,17 +1,15 @@
-# per
+# Per
 
-Lightweight HTTP GUI
+Native HTTP GUI client
 
 ## Development
 
-### Getting started
+This project requires the Qt libraries to be installed on your system.
 
-1. Clone the repo to your pc
-2. Get the submodules with `git submodule update --init --recursive`
+### Clang + clangd
+If your development environment doesn't *automatically* work, you need to create a `.clangd` file in the root of the project where you point to the location of the Qt libraries, i.e.:
+```
+CompileFlags:
+   Add: /opt/homebrew/lib/lib
+```
 
-## TODO
-
-- refactor: use auto more 
-- find out if we need to use namespaces throughout the codebase
-- fix tab art, right now it just uses generic tab art  with a replaced close button
-- handle keyboard shortcuts (DOING)
