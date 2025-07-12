@@ -10,8 +10,14 @@ HttpTab::HttpTab(QWidget *parent, HttpRequestModel &httpRequestModel)
 {
     ui->setupUi(this);
 
+    // setup request parameters & headers
     this->SetupEnabledKeyValueTable(*ui->parametersTable, m_httpRequestModel.parameters);
     this->SetupEnabledKeyValueTable(*ui->headersTable, m_httpRequestModel.headers);
+
+    // setup request body tab
+    connect(ui->bodyTextEdit, &QPlainTextEdit::textChanged, [this]() {
+        m_httpRequestModel.bodyContent = ui->bodyTextEdit->toPlainText();
+    });
 }
 
 HttpTab::~HttpTab()
