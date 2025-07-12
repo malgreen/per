@@ -3,8 +3,6 @@
 
 #include "../../core/http.h"
 
-#include <QCheckBox>
-#include <QWidget>
 #include <QtWidgets/qtablewidget.h>
 
 namespace Per
@@ -28,7 +26,6 @@ class HttpTab : public QWidget
     Ui::HttpTab *ui;
     HttpRequestModel &m_httpRequestModel;
     void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
-    void OnTableCellChanged(int row, int column) const;
     void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const;
     void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
     static bool IsTableRowEmpty(const QTableWidget &table, int row);

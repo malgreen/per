@@ -41,45 +41,19 @@ void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyVal
         i++;
     }
 
-    // connect signal - TODO: lambda
-    // v1:
-    connect(&table, &QTableWidget::cellChanged, this, &HttpTab::OnTableCellChanged);
-    // v2:
-    // connect(&table, &QTableWidget::cellChanged, [this, &table, &tableData](const int row, const int column) {
-    //     if (column == 0)
-    //     {
-    //         tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
-    //         tableData[row].key = table.item(row, column)->text();
-    //     }
-    //     else if (column == 1)
-    //     {
-    //         tableData[row].value = table.item(row, column)->text();
-    //     }
-    //     AddTableRowIfLastRowNotEmpty(table, tableData);
-    // });
-}
-
-
-void HttpTab::OnTableCellChanged(int row, int column) const
-{
-    // TODO: dereferencing a cast to a pointer seems... odd
-    auto &table = *qobject_cast<QTableWidget*>(sender());
-
-    // TODO: can below be an inline thing?
-    auto &tableData = table.objectName() == "parametersTable" ? m_httpRequestModel.parameters : m_httpRequestModel.headers;
-
-
-    if (column == 0)
-    {
-        tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
-        tableData[row].key = table.item(row, column)->text();
-    }
-    else if (column == 1)
-    {
-        tableData[row].value = table.item(row, column)->text();
-    }
-
-    AddTableRowIfLastRowNotEmpty(table, tableData);
+    // signal setup
+    connect(&table, &QTableWidget::cellChanged, [this, &table, &tableData](const int row, const int column) {
+        if (column == 0)
+        {
+            tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
+            tableData[row].key = table.item(row, column)->text();
+        }
+        else if (column == 1)
+        {
+            tableData[row].value = table.item(row, column)->text();
+        }
+        AddTableRowIfLastRowNotEmpty(table, tableData);
+    });
 }
 
 void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const

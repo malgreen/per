@@ -25,6 +25,7 @@ typedef struct
     QString value;
 } EnabledKeyValuePair;
 
+/* REQUEST STUFF */
 typedef struct
 {
     QString name;
@@ -38,17 +39,24 @@ typedef struct
 
 static QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
 
-static void SetDefaultHttpHeaders(HttpRequestModel &model)
+static HttpRequestModel *CreateDefaultHttpRequestModel()
 {
-    model.headers = {
-        {true, "Host", "<set during send>"},
-        {true, "Content-Length", "<set during send>"},
-        {true, "Content-Type", model.contentType},
-        {true, "User-Agent", "Chrome/138.0.0.0"}, // could be something else
-        {true, "Accept", "application/json"},
-        {true, "Accept-Encoding", "gzip, deflate, br"},
-        {true, "Connection", "keep-alive"},
-    };
+    return new HttpRequestModel{.name = "New request",
+                                .url = "https://www.json.org/",
+                                .method = GET,
+                                .headers =
+                                    {
+                                        {true, "Host", "<set during send>"},
+                                        {true, "Content-Length", "<set during send>"},
+                                        {true, "Content-Type", ""},
+                                        {true, "User-Agent", "Chrome/138.0.0.0"}, // could be something else
+                                        {true, "Accept", "application/json"},
+                                        {true, "Accept-Encoding", "gzip, deflate, br"},
+                                        {true, "Connection", "keep-alive"},
+                                    },
+                                .parameters = {},
+                                .contentType = "",
+                                .bodyContent = ""};
 }
 
 } // namespace Per
