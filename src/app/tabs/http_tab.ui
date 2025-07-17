@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>730</width>
-    <height>458</height>
+    <width>500</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -50,168 +50,232 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="requestGroup">
-     <property name="title">
-      <string>Request</string>
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Orientation::Vertical</enum>
      </property>
-     <property name="flat">
+     <property name="opaqueResize">
       <bool>true</bool>
      </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_5">
-      <item>
-       <widget class="QTabWidget" name="requestTabWidget">
-        <property name="tabPosition">
-         <enum>QTabWidget::TabPosition::North</enum>
-        </property>
-        <property name="tabShape">
-         <enum>QTabWidget::TabShape::Rounded</enum>
-        </property>
-        <property name="currentIndex">
-         <number>0</number>
-        </property>
-        <widget class="QWidget" name="parametersTab">
-         <attribute name="title">
-          <string>Parameters</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QTableWidget" name="parametersTable">
-            <property name="horizontalScrollBarPolicy">
-             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
-            </property>
-            <property name="dragEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="dragDropMode">
-             <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
-            </property>
-            <property name="showGrid">
-             <bool>true</bool>
-            </property>
-            <property name="cornerButtonEnabled">
-             <bool>false</bool>
-            </property>
-            <property name="columnCount">
-             <number>3</number>
-            </property>
-            <attribute name="horizontalHeaderVisible">
-             <bool>true</bool>
-            </attribute>
-            <attribute name="horizontalHeaderCascadingSectionResizes">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>5</number>
-            </attribute>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>100</number>
-            </attribute>
-            <attribute name="horizontalHeaderHighlightSections">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Key</string>
+     <widget class="QGroupBox" name="requestGroup">
+      <property name="title">
+       <string>Request</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_5">
+       <item>
+        <widget class="QTabWidget" name="requestTabWidget">
+         <property name="tabPosition">
+          <enum>QTabWidget::TabPosition::North</enum>
+         </property>
+         <property name="tabShape">
+          <enum>QTabWidget::TabShape::Rounded</enum>
+         </property>
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="requestParametersTab">
+          <attribute name="title">
+           <string>Parameters</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <widget class="QTableWidget" name="requestParametersTable">
+             <property name="horizontalScrollBarPolicy">
+              <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
              </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Value</string>
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
              </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
+             <property name="dragEnabled">
+              <bool>false</bool>
              </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
+             <property name="dragDropMode">
+              <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
+             </property>
+             <property name="showGrid">
+              <bool>true</bool>
+             </property>
+             <property name="cornerButtonEnabled">
+              <bool>false</bool>
+             </property>
+             <property name="columnCount">
+              <number>3</number>
+             </property>
+             <attribute name="horizontalHeaderVisible">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>5</number>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>100</number>
+             </attribute>
+             <attribute name="horizontalHeaderHighlightSections">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Value</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="requestHeadersTab">
+          <attribute name="title">
+           <string>Headers</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <widget class="QTableWidget" name="requestHeadersTable">
+             <property name="sizeAdjustPolicy">
+              <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
+             </property>
+             <property name="showGrid">
+              <bool>true</bool>
+             </property>
+             <property name="columnCount">
+              <number>3</number>
+             </property>
+             <attribute name="horizontalHeaderCascadingSectionResizes">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderMinimumSectionSize">
+              <number>5</number>
+             </attribute>
+             <attribute name="horizontalHeaderDefaultSectionSize">
+              <number>100</number>
+             </attribute>
+             <attribute name="horizontalHeaderHighlightSections">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>false</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Value</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string/>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="requestBodyTab">
+          <attribute name="title">
+           <string>Body</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_3">
+           <item>
+            <widget class="QPlainTextEdit" name="requestBodyTextEdit">
+             <property name="placeholderText">
+              <string>&lt;request body&gt;</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-        <widget class="QWidget" name="headersTab">
-         <attribute name="title">
-          <string>Headers</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QTableWidget" name="headersTable">
-            <property name="sizeAdjustPolicy">
-             <enum>QAbstractScrollArea::SizeAdjustPolicy::AdjustToContents</enum>
-            </property>
-            <property name="showGrid">
-             <bool>true</bool>
-            </property>
-            <property name="columnCount">
-             <number>3</number>
-            </property>
-            <attribute name="horizontalHeaderCascadingSectionResizes">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderMinimumSectionSize">
-             <number>5</number>
-            </attribute>
-            <attribute name="horizontalHeaderDefaultSectionSize">
-             <number>100</number>
-            </attribute>
-            <attribute name="horizontalHeaderHighlightSections">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="horizontalHeaderStretchLastSection">
-             <bool>false</bool>
-            </attribute>
-            <attribute name="verticalHeaderVisible">
-             <bool>false</bool>
-            </attribute>
-            <column>
-             <property name="text">
-              <string>Key</string>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="responseGroup">
+      <property name="title">
+       <string>Response</string>
+      </property>
+      <property name="flat">
+       <bool>true</bool>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_6">
+       <item>
+        <widget class="QTabWidget" name="tabWidget">
+         <property name="currentIndex">
+          <number>1</number>
+         </property>
+         <widget class="QWidget" name="responseBodyTab">
+          <attribute name="title">
+           <string>Body</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_8">
+           <item>
+            <widget class="QPlainTextEdit" name="responseBodyTextEdit">
+             <property name="placeholderText">
+              <string>&lt;response body&gt;</string>
              </property>
-            </column>
-            <column>
-             <property name="text">
-              <string>Value</string>
-             </property>
-            </column>
-            <column>
-             <property name="text">
-              <string/>
-             </property>
-            </column>
-           </widget>
-          </item>
-         </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="responseHeadersTab">
+          <attribute name="title">
+           <string>Headers</string>
+          </attribute>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <widget class="QTableWidget" name="responseHeadersTable">
+             <column>
+              <property name="text">
+               <string>Key</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Value</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </widget>
-        <widget class="QWidget" name="bodyTab">
-         <attribute name="title">
-          <string>Body</string>
-         </attribute>
-         <layout class="QVBoxLayout" name="verticalLayout_3">
-          <item>
-           <widget class="QPlainTextEdit" name="bodyTextEdit"/>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-     </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
   </layout>

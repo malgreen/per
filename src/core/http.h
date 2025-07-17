@@ -2,6 +2,9 @@
 #define HTTP_H
 #include <QtCore/qlist.h>
 #include <QtCore/qstring.h>
+#include <QtCore/QUrlQuery.h>
+#include <QtNetwork/qnetworkrequest.h>
+#include <QtNetwork/qnetworkreply.h>
 
 namespace Per
 {
@@ -18,6 +21,7 @@ typedef enum
     // TRACE,
 } HttpMethod;
 
+// TODO: maybe this should just be removed and QPair be used instead, we don't need to serialize enableds status
 typedef struct
 {
     bool enabled;
@@ -37,27 +41,23 @@ typedef struct
     QString bodyContent;
 } HttpRequestModel;
 
-static QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
+inline QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
 
-static HttpRequestModel *CreateDefaultHttpRequestModel()
+HttpRequestModel *CreateDefaultHttpRequestModel();
+QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel &model);
+QNetworkRequest HttpRequestToQtRequest(HttpRequestModel &model);
+
+/* RESPONSE STUFF */
+typedef struct
 {
-    return new HttpRequestModel{.name = "New request",
-                                .url = "https://www.json.org/",
-                                .method = GET,
-                                .headers =
-                                    {
-                                        {true, "Host", "<set during send>"},
-                                        {true, "Content-Length", "<set during send>"},
-                                        {true, "Content-Type", ""},
-                                        {true, "User-Agent", "Chrome/138.0.0.0"}, // could be something else
-                                        {true, "Accept", "application/json"},
-                                        {true, "Accept-Encoding", "gzip, deflate, br"},
-                                        {true, "Connection", "keep-alive"},
-                                    },
-                                .parameters = {},
-                                .contentType = "",
-                                .bodyContent = ""};
-}
+    uint statusCode;
+    QString contentType;
+    QString contentBody;
+    QList<QPair<QString, QString>> headers;
+    // uint sizeBytes;
+} HttpResponseModel;
+
+HttpResponseModel *QtReplyToHttpResponse(QNetworkReply &reply);
 
 } // namespace Per
 #endif // HTTP_H

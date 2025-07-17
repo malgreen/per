@@ -24,7 +24,7 @@ if (FALSE)
 endif()
 
 # === Qt SETUP ===
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS Widgets Network)
 
 qt_standard_project_setup()
 
@@ -37,10 +37,11 @@ qt_add_executable(${PROJECT_NAME}
         src/app/tabs/http_tab.h
         src/app/tabs/http_tab.ui
         src/core/http.h
+        src/core/http.cpp
 
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Network)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE ON

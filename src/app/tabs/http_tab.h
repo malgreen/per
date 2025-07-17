@@ -3,7 +3,11 @@
 
 #include "../../core/http.h"
 
-#include <QtWidgets/qtablewidget.h>
+#include <QtWidgets/QTableWidget>
+#include <QtNetwork/QNetworkAccessManager>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+
 
 namespace Per
 {
@@ -24,7 +28,10 @@ class HttpTab : public QWidget
 
   private:
     Ui::HttpTab *ui;
+    QNetworkAccessManager &m_networkManager;
     HttpRequestModel &m_httpRequestModel;
+    HttpResponseModel *m_httpResponseModel; // can be null
+
     void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
     void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const;
     void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
