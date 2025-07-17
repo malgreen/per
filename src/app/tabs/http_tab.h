@@ -23,18 +23,18 @@ class HttpTab : public QWidget
     Q_OBJECT
 
   public:
-    explicit HttpTab(QWidget *parent, HttpRequestModel &httpRequestModel);
+    explicit HttpTab(QWidget *parent, HttpRequestModel_t &httpRequestModel);
     ~HttpTab() override;
 
   private:
     Ui::HttpTab *ui;
     QNetworkAccessManager &m_networkManager;
-    HttpRequestModel &m_httpRequestModel;
-    HttpResponseModel *m_httpResponseModel; // can be null
+    HttpRequestModel_t &m_httpRequestModel;
+    HttpResponseModel_t *m_httpResponseModel; // can be null
 
-    void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
-    void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const;
-    void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const;
+    void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const;
+    void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const;
+    void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const;
     static bool IsTableRowEmpty(const QTableWidget &table, int row);
 };
 } // namespace Per

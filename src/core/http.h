@@ -19,7 +19,7 @@ typedef enum
     OPTIONS,
     // CONNECT,
     // TRACE,
-} HttpMethod;
+} HttpMethod_t;
 
 // TODO: maybe this should just be removed and QPair be used instead, we don't need to serialize enableds status
 typedef struct
@@ -27,25 +27,25 @@ typedef struct
     bool enabled;
     QString key;
     QString value;
-} EnabledKeyValuePair;
+} EnabledKeyValuePair_t;
 
 /* REQUEST STUFF */
 typedef struct
 {
     QString name;
     QString url;
-    HttpMethod method;
-    QList<EnabledKeyValuePair> headers;
-    QList<EnabledKeyValuePair> parameters;
+    HttpMethod_t method;
+    QList<EnabledKeyValuePair_t> headers;
+    QList<EnabledKeyValuePair_t> parameters;
     QString contentType;
     QString bodyContent;
-} HttpRequestModel;
+} HttpRequestModel_t;
 
 inline QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
 
-HttpRequestModel *CreateDefaultHttpRequestModel();
-QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel &model);
-QNetworkRequest HttpRequestToQtRequest(HttpRequestModel &model);
+HttpRequestModel_t *CreateDefaultHttpRequestModel();
+QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel_t &model);
+QNetworkRequest HttpRequestToQtRequest(HttpRequestModel_t &model);
 
 /* RESPONSE STUFF */
 typedef struct
@@ -55,9 +55,9 @@ typedef struct
     QString contentBody;
     QList<QPair<QString, QString>> headers;
     // uint sizeBytes;
-} HttpResponseModel;
+} HttpResponseModel_t;
 
-HttpResponseModel *QtReplyToHttpResponse(QNetworkReply &reply);
+HttpResponseModel_t *QtReplyToHttpResponse(QNetworkReply &reply);
 
 } // namespace Per
 #endif // HTTP_H

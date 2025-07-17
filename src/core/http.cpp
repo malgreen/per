@@ -4,9 +4,9 @@
 namespace Per
 {
 
-HttpRequestModel *CreateDefaultHttpRequestModel()
+HttpRequestModel_t *CreateDefaultHttpRequestModel()
 {
-    return new HttpRequestModel{.name = "New request",
+    return new HttpRequestModel_t{.name = "New request",
                                 .url = "https://www.json.org/",
                                 .method = GET,
                                 .headers =
@@ -24,7 +24,7 @@ HttpRequestModel *CreateDefaultHttpRequestModel()
                                 .bodyContent = ""};
 }
 
-QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel &model)
+QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel_t &model)
 {
     auto url = QUrl(model.url);
     auto query = QUrlQuery(url);
@@ -37,7 +37,7 @@ QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel &model)
     return url;
 }
 
-QNetworkRequest HttpRequestToQtRequest(HttpRequestModel &model)
+QNetworkRequest HttpRequestToQtRequest(HttpRequestModel_t &model)
 {
     auto request = QNetworkRequest();
     for (const auto &header: model.headers)
@@ -52,9 +52,9 @@ QNetworkRequest HttpRequestToQtRequest(HttpRequestModel &model)
     return request;
 }
 
-HttpResponseModel *QtReplyToHttpResponse(QNetworkReply &reply)
+HttpResponseModel_t *QtReplyToHttpResponse(QNetworkReply &reply)
 {
-    auto model = new HttpResponseModel;
+    auto model = new HttpResponseModel_t;
     model->statusCode = reply.attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt(); // or maybe just .toInt();
     model->headers = {};
     for (const auto &header : reply.rawHeaderPairs())

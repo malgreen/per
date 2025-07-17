@@ -3,7 +3,7 @@
 
 namespace Per
 {
-HttpTab::HttpTab(QWidget *parent, HttpRequestModel &httpRequestModel)
+HttpTab::HttpTab(QWidget *parent, HttpRequestModel_t &httpRequestModel)
     : QWidget(parent), ui(new Ui::HttpTab), m_networkManager(*new QNetworkAccessManager(this)), m_httpRequestModel(httpRequestModel)
 {
     ui->setupUi(this);
@@ -82,7 +82,7 @@ HttpTab::~HttpTab()
     delete m_httpResponseModel;
 }
 
-void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const
+void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const
 {
     /* one day it would be nice to use a QTableView with a backing model,
      * the current setup means lots of state duplication. which is awesome */
@@ -118,7 +118,7 @@ void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyVal
     });
 }
 
-void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &tableData, EnabledKeyValuePair &rowData) const
+void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const
 {
     const int insertIndex = table.rowCount();
     auto tableName = table.objectName();
@@ -151,7 +151,7 @@ void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair> &table
     table.setCellWidget(insertIndex, 2, deleteRowButton);
 }
 
-void HttpTab::AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair> &tableData) const
+void HttpTab::AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const
 {
     const int rowCount = table.rowCount();
 
