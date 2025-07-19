@@ -41,7 +41,7 @@ typedef struct
     QString bodyContent;
 } HttpRequestModel_t;
 
-inline QString StaticHttpHeaderKeys[2] = {"Host", "Content-Length"};
+inline QList<QString> StaticHttpHeaderKeys = {"Host", "Content-Length"}; // seems weird?
 
 HttpRequestModel_t *CreateDefaultHttpRequestModel();
 QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel_t &model);

@@ -11,68 +11,12 @@ HttpTab::HttpTab(QWidget *parent, HttpRequestModel_t &httpRequestModel)
     this->ui->splitter->setCollapsible(0, false);
     this->ui->splitter->setSizes({1, 0});
 
-    // setup url bar
-    this->ui->urlLineEdit->setText(m_httpRequestModel.url);
+    this->SetupUrlGroup();
+    this->SetupRequestGroup();
+    this->SetupResponseGroup();
 
-    // setup tables
-    this->SetupEnabledKeyValueTable(*ui->requestParametersTable, m_httpRequestModel.parameters);
-    this->SetupEnabledKeyValueTable(*ui->requestHeadersTable, m_httpRequestModel.headers);
-    this->ui->responseHeadersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    this->ui->responseHeadersTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
-
-
-    // setup request body tab
-    connect(ui->requestBodyTextEdit, &QPlainTextEdit::textChanged,[this]() {
-        m_httpRequestModel.bodyContent = ui->requestBodyTextEdit->toPlainText();
-    });
-
-    // setup network manager TODO: still not sure if it should be a reference or a pointer
-    connect(&m_networkManager, &QNetworkAccessManager::finished, [this](QNetworkReply *reply) {
-        if (reply->error())
-        {
-            // we still want to show it
-            qDebug() << reply->errorString();
-        }
-
-        m_httpResponseModel = QtReplyToHttpResponse(*reply); // not sure if this works
-        reply->deleteLater();
-        ui->responseBodyTextEdit->setPlainText(m_httpResponseModel->contentBody);
-        // ui->responseHeadersTable->setRowCount();
-        for (const auto &header : m_httpResponseModel->headers)
-        {
-            const int index = ui->responseHeadersTable->rowCount();
-            ui->responseHeadersTable->insertRow(index);
-            ui->responseHeadersTable->setItem(index - 1, 0, new QTableWidgetItem(header.first));
-            ui->responseHeadersTable->setItem(index - 1, 1, new QTableWidgetItem(header.second));
-        }
-
-        this->ui->splitter->setSizes({1, 1});
-        ui->sendButton->setDisabled(false);
-    });
-
-    // setup send button
-    connect(ui->sendButton, &QPushButton::clicked, [this]() {
-        switch (m_httpRequestModel.method)
-        {
-        case GET:
-            ui->sendButton->setDisabled(true); // a progress indicator would be nice
-            m_networkManager.get(HttpRequestToQtRequest(m_httpRequestModel));
-            break;
-        case POST:
-            throw;
-        case PUT:
-            throw;
-        case PATCH:
-            throw;
-        case DELETE:
-            throw;
-        case HEAD:
-            throw;
-        case OPTIONS:
-            throw;
-        }
-    });
-
+    // setup network manager
+    connect(&m_networkManager, &QNetworkAccessManager::finished, this, &HttpTab::OnNetworkManagerFinished);
 }
 
 HttpTab::~HttpTab()
@@ -80,6 +24,62 @@ HttpTab::~HttpTab()
     delete ui;
     delete &m_httpRequestModel;
     delete m_httpResponseModel;
+}
+
+void HttpTab::SetupUrlGroup()
+{
+    // combobox
+
+    // text field
+    this->ui->urlLineEdit->setText(m_httpRequestModel.url);
+
+    // send button
+    connect(ui->sendButton, &QPushButton::clicked, this, &HttpTab::OnSendButtonClicked);
+}
+void HttpTab::SetupRequestGroup()
+{
+    // params / headers tables
+    this->SetupEnabledKeyValueTable(*ui->requestParametersTable, m_httpRequestModel.parameters);
+    this->SetupEnabledKeyValueTable(*ui->requestHeadersTable, m_httpRequestModel.headers);
+
+    // handle static headers
+    for (int i = 0; i < ui->requestHeadersTable->rowCount(); ++i)
+    {
+        const auto keyCell = ui->requestHeadersTable->item(i, 0);
+        if (!StaticHttpHeaderKeys.contains(keyCell->text()))
+            continue;
+        keyCell->setBackground(QBrush(Qt::gray));
+        keyCell->setFlags(Qt::ItemIsEnabled);
+
+        const auto valueCell = ui->requestHeadersTable->item(i, 1);
+        valueCell->setText("<set during send>");
+        valueCell->setBackground(QBrush(Qt::gray));
+        valueCell->setFlags(Qt::ItemIsEnabled);
+
+        ui->requestHeadersTable->removeCellWidget(i, 2);
+        const auto deleteBtnCell = new QTableWidgetItem();
+        deleteBtnCell->setBackground(QBrush(Qt::gray));
+        deleteBtnCell->setFlags(Qt::ItemIsEnabled);
+        ui->requestHeadersTable->setItem(i, 2, deleteBtnCell);
+    }
+
+
+    // request body editor
+    connect(ui->requestBodyTextEdit, &QPlainTextEdit::textChanged, [this]() {
+        m_httpRequestModel.bodyContent = ui->requestBodyTextEdit->toPlainText();
+    });
+}
+
+void HttpTab::SetupResponseGroup()
+{
+    // headers table TODO: fix column sizing
+    this->ui->responseHeadersTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    this->ui->responseHeadersTable->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    this->ui->responseHeadersTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    // response body
+    this->ui->responseBodyTextEdit->setReadOnly(true);
+
 }
 
 void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const
@@ -116,6 +116,53 @@ void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyVal
         }
         AddTableRowIfLastRowNotEmpty(table, tableData);
     });
+}
+
+void HttpTab::OnNetworkManagerFinished(QNetworkReply *reply)
+{
+    if (reply->error())
+    {
+        // we still want to show it
+        qDebug() << reply->errorString();
+    }
+
+    m_httpResponseModel = QtReplyToHttpResponse(*reply); // not sure if this works
+    reply->deleteLater();
+    ui->responseBodyTextEdit->setPlainText(m_httpResponseModel->contentBody);
+    // ui->responseHeadersTable->setRowCount();
+    for (const auto &header : m_httpResponseModel->headers)
+    {
+        const int index = ui->responseHeadersTable->rowCount();
+        ui->responseHeadersTable->insertRow(index);
+        ui->responseHeadersTable->setItem(index - 1, 0, new QTableWidgetItem(header.first));
+        ui->responseHeadersTable->setItem(index - 1, 1, new QTableWidgetItem(header.second));
+    }
+
+    this->ui->splitter->setSizes({1, 1});
+    ui->sendButton->setDisabled(false);
+}
+
+void HttpTab::OnSendButtonClicked()
+{
+    switch (m_httpRequestModel.method)
+    {
+    case GET:
+        ui->sendButton->setDisabled(true); // a progress indicator would be nice
+        m_networkManager.get(HttpRequestToQtRequest(m_httpRequestModel));
+        break;
+    case POST:
+        throw;
+    case PUT:
+        throw;
+    case PATCH:
+        throw;
+    case DELETE:
+        throw;
+    case HEAD:
+        throw;
+    case OPTIONS:
+        throw;
+    }
 }
 
 void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const

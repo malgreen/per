@@ -11,9 +11,9 @@ HttpRequestModel_t *CreateDefaultHttpRequestModel()
                                 .method = GET,
                                 .headers =
                                     {
-                                        {true, "Host", "<set during send>"},
-                                        {true, "Content-Length", "<set during send>"},
-                                        {true, "Content-Type", ""},
+                                        {true, "Host", ""},
+                                        {true, "Content-Length", ""},
+                                        {true, "Content-Type", "application/json"},
                                         {true, "User-Agent", "Chrome/138.0.0.0"}, // could be something else
                                         {true, "Accept", "application/json"},
                                         {true, "Accept-Encoding", "gzip, deflate, br"},
@@ -40,15 +40,21 @@ QUrl CreateQUrlFromHttpRequestModel(HttpRequestModel_t &model)
 QNetworkRequest HttpRequestToQtRequest(HttpRequestModel_t &model)
 {
     auto request = QNetworkRequest();
+
+    // non-static headers
     for (const auto &header: model.headers)
     {
-        if (!header.enabled || header.key.isEmpty()) continue;
+        if (!header.enabled || header.key.isEmpty() || StaticHttpHeaderKeys.contains(header.key)) continue;
         request.headers().append(header.key, header.value);
     }
 
+    // static headers TODO: is "Host" header set automatically?
+    request.setRawHeader("Content-Type", model.contentType.toUtf8());
+    request.setRawHeader("Content-Length", QByteArray::number(model.bodyContent.length()));
+
+    // url + params
     request.setUrl(CreateQUrlFromHttpRequestModel(model));
 
-    request.setRawHeader("Content-Type", model.contentType.toUtf8());
     return request;
 }
 
@@ -62,7 +68,6 @@ HttpResponseModel_t *QtReplyToHttpResponse(QNetworkReply &reply)
         model->headers.append(header);
     }
     model->contentType = reply.rawHeader("Content-Type");
-    // reply.rea
     model->contentBody = reply.readAll();
     return model;
 }

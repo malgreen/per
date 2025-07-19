@@ -1,9 +1,13 @@
 # Per - TODO
 
 ## Milestone 0.2.0
-- readonly rows for some headers
 - eliminate duplicates from headers (maybe also parameters), maybe QSet?
-- response panel (body, headers)
+- combobox should be populated in code
+- url text edit should be bound to model's url <-
+- when url text changes, parameters should be updated accordingly
+- when parameter table changes, url text should be updated accordingly
+- about.h file + menu entry
+- cpack deployment (see [this](https://doc.qt.io/qt-6/cmake-deployment.html))
 
 ## Milestone 0.3.0
 

@@ -32,7 +32,18 @@ class HttpTab : public QWidget
     HttpRequestModel_t &m_httpRequestModel;
     HttpResponseModel_t *m_httpResponseModel; // can be null
 
+    void SetupUrlGroup();
+    void SetupRequestGroup();
+    void SetupResponseGroup();
+
     void SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const;
+
+    void OnNetworkManagerFinished(QNetworkReply *reply);
+    void OnSendButtonClicked();
+
+    void SyncParametersToUrl();
+    void SyncUrlToParameters();
+
     void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const;
     void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const;
     static bool IsTableRowEmpty(const QTableWidget &table, int row);
