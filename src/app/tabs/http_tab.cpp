@@ -28,10 +28,14 @@ HttpTab::~HttpTab()
 
 void HttpTab::SetupUrlGroup()
 {
-    // combobox
+    // method combobox
 
-    // text field
+    // url text field
     this->ui->urlLineEdit->setText(m_httpRequestModel.url);
+    connect(ui->urlLineEdit, &QLineEdit::textChanged, [this](const QString &text) { // &HttpTab::OnUrlChanged
+        auto url = QUrl(text);
+        m_httpRequestModel.url = url.toString(QUrl::RemoveQuery);
+    });
 
     // send button
     connect(ui->sendButton, &QPushButton::clicked, this, &HttpTab::OnSendButtonClicked);
@@ -105,6 +109,7 @@ void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyVal
 
     // signal setup
     connect(&table, &QTableWidget::cellChanged, [this, &table, &tableData](const int row, const int column) {
+        qDebug() << "cellChanged called" << row << column;
         if (column == 0)
         {
             tableData[row].enabled = table.item(row, column)->checkState() == Qt::Checked;
@@ -122,14 +127,14 @@ void HttpTab::OnNetworkManagerFinished(QNetworkReply *reply)
 {
     if (reply->error())
     {
-        // we still want to show it
+        // we still want to show it?
         qDebug() << reply->errorString();
     }
 
     m_httpResponseModel = QtReplyToHttpResponse(*reply); // not sure if this works
     reply->deleteLater();
     ui->responseBodyTextEdit->setPlainText(m_httpResponseModel->contentBody);
-    // ui->responseHeadersTable->setRowCount();
+    ui->responseHeadersTable->setRowCount(0);
     for (const auto &header : m_httpResponseModel->headers)
     {
         const int index = ui->responseHeadersTable->rowCount();
