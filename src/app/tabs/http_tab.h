@@ -7,6 +7,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
+#include <QtWidgets/QGraphicsEffect>
 
 
 namespace Per
@@ -41,8 +42,8 @@ class HttpTab : public QWidget
     void OnNetworkManagerFinished(QNetworkReply *reply);
     void OnSendButtonClicked();
 
-    void SyncParametersToUrl();
-    void SyncUrlToParameters();
+    void GetParametersFromUrl(const QUrl &url) const;
+    void GetUrlFromParameters() const;
 
     void AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const;
     void AddTableRowIfLastRowNotEmpty(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData) const;

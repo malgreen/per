@@ -33,7 +33,7 @@ typedef struct
 typedef struct
 {
     QString name;
-    QString url;
+    QString url; // TODO: rewrite as QUrl?
     HttpMethod_t method;
     QList<EnabledKeyValuePair_t> headers;
     QList<EnabledKeyValuePair_t> parameters;

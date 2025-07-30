@@ -1,10 +1,14 @@
 #include "http_tab.h"
 #include "ui_http_tab.h"
 
+#include "../../util/signal_blocker.h"
+
 namespace Per
 {
-HttpTab::HttpTab(QWidget *parent, HttpRequestModel_t &httpRequestModel)
-    : QWidget(parent), ui(new Ui::HttpTab), m_networkManager(*new QNetworkAccessManager(this)), m_httpRequestModel(httpRequestModel)
+HttpTab::HttpTab(QWidget *parent, HttpRequestModel_t &httpRequestModel): QWidget(parent),
+    ui(new Ui::HttpTab),
+    m_networkManager(*new QNetworkAccessManager(this)),
+    m_httpRequestModel(httpRequestModel)
 {
     ui->setupUi(this);
 
@@ -35,6 +39,7 @@ void HttpTab::SetupUrlGroup()
     connect(ui->urlLineEdit, &QLineEdit::textChanged, [this](const QString &text) { // &HttpTab::OnUrlChanged
         auto url = QUrl(text);
         m_httpRequestModel.url = url.toString(QUrl::RemoveQuery);
+        GetParametersFromUrl(url);
     });
 
     // send button
@@ -120,14 +125,15 @@ void HttpTab::SetupEnabledKeyValueTable(QTableWidget &table, QList<EnabledKeyVal
             tableData[row].value = table.item(row, column)->text();
         }
         AddTableRowIfLastRowNotEmpty(table, tableData);
+        GetUrlFromParameters();
     });
 }
 
 void HttpTab::OnNetworkManagerFinished(QNetworkReply *reply)
 {
+    // TODO: have some kind of status code text (that also changes color)
     if (reply->error())
     {
-        // we still want to show it?
         qDebug() << reply->errorString();
     }
 
@@ -169,11 +175,99 @@ void HttpTab::OnSendButtonClicked()
         throw;
     }
 }
+void HttpTab::GetParametersFromUrl(const QUrl &url) const
+{
+    // TODO: rewrite to make it more intuitive
+    // the idea in this function is that we re-use enabled parameters by overwriting values (preserving the order)
+
+    auto &modelParams = this->m_httpRequestModel.parameters; // alias looks better
+
+    // remove empty pair at the end of params list (if it is enabled)
+    if (modelParams.last().enabled && modelParams.last().key.isEmpty() && modelParams.last().value.isEmpty())
+    {
+        modelParams.pop_back();
+    }
+
+    // change existing model parameters to the ones in the url bar
+    auto paramStrings = url.query().split('&');
+    int i = -1; // because of the weird while loop
+    for (const auto &paramString : paramStrings)
+    {
+        // define the key/value parts
+        auto split = paramString.split('=');
+        auto key = split.at(0); // pretty sure we always get 1 item from a split
+        auto value = split.count() > 1 ? split.at(1) : QString();
+
+        // iterate over model's existing parameters and mutate one accordingly
+        auto done = false; // instead of break inside the loop
+        while (i < modelParams.count() && !done)
+        {
+            i++;
+            if (i >= modelParams.count()) // add a new parameter if necessary
+            {
+                modelParams.append({.enabled = true, .key = key, .value = value});
+                done = true;
+            }
+            else if (modelParams.at(i).enabled == true) // or mutate existing param
+            {
+                modelParams[i].key = key; // TODO: afaik this can't be done nicely with .at(i)
+                modelParams[i].value = value;
+                done = true;
+            }
+        }
+    }
+
+    // find out if we deleted a parameter from the url
+    while (std::ranges::count_if(modelParams, [](const auto &item) { return item.enabled; }) > paramStrings.count())
+    {
+        for (int j = modelParams.count() - 1; j >= 0; j--)
+        {
+            if (modelParams.at(j).enabled == true)
+            {
+                modelParams.removeAt(j);
+                break;
+            }
+        }
+    }
+
+    // update the visual table
+    ui->requestParametersTable->setRowCount(0);
+    for (auto &param : modelParams)
+    {
+        AddTableRow(*ui->requestParametersTable, modelParams, param);
+    }
+    AddTableRowIfLastRowNotEmpty(*ui->requestParametersTable, modelParams);
+}
+void HttpTab::GetUrlFromParameters() const
+{
+    // 1. get the existing url from model (we could remove query again to make sure)
+    auto url = QUrl(m_httpRequestModel.url);
+
+    // 2. for each enabled parameter in the model, add it to the url
+    auto query = QUrlQuery();
+    for (const auto &param : m_httpRequestModel.parameters)
+    {
+        if (param.enabled && !(param.key.isEmpty() && param.value.isEmpty()))
+        {
+            query.addQueryItem(param.key, param.value);
+        }
+    }
+    url.setQuery(query);
+
+    // 3.
+    auto blocker = SignalBlocker(*ui->urlLineEdit);
+    ui->urlLineEdit->setText(url.toString());
+
+    // url.setQuery()
+}
 
 void HttpTab::AddTableRow(QTableWidget &table, QList<EnabledKeyValuePair_t> &tableData, EnabledKeyValuePair_t &rowData) const
 {
+    // we don't want to constantly trigger cellChanged (early returns means this breaks)
+    // it would be nicer to have a class with a destructor that disables the signal blocking
+    auto blocker = SignalBlocker(table);
+
     const int insertIndex = table.rowCount();
-    auto tableName = table.objectName();
 
     table.insertRow(insertIndex);
 
@@ -230,5 +324,7 @@ bool HttpTab::IsTableRowEmpty(const QTableWidget &table, const int row)
     }
     return true; // if we don't
 }
+
+
 
 } // namespace Per

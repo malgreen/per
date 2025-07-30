@@ -38,6 +38,8 @@ qt_add_executable(${PROJECT_NAME}
         src/app/tabs/http_tab.ui
         src/core/http.h
         src/core/http.cpp
+        src/util/signal_blocker.cpp
+        src/util/signal_blocker.h
 
 )
 

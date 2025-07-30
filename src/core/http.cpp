@@ -60,6 +60,7 @@ QNetworkRequest HttpRequestToQtRequest(HttpRequestModel_t &model)
 
 HttpResponseModel_t *QtReplyToHttpResponse(QNetworkReply &reply)
 {
+    // TODO: consider move semantics
     auto model = new HttpResponseModel_t;
     model->statusCode = reply.attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt(); // or maybe just .toInt();
     model->headers = {};
